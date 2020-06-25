@@ -54,20 +54,20 @@ def order_items(order, cur):
                                   'quantity': item['quantity'],
                                   'price': round(product['price'] * exchange_rate(to=cur), 2),
                                   'vat': 0})
+    # overkill
+    # items = [{'product_id': item['product_id'],
+    #            'quantity': item['quantity'],
+    #            'price': round(product['price'] * exchange_rate(to=cur), 2),
+    #            'vat': round(pricing['vat_bands']['standard'] * product['price'] * exchange_rate(to=cur), 2)}
+    #           if product['vat_band'] == 'standard' else
+    #           {'product_id': item['product_id'],
+    #            'quantity': item['quantity'],
+    #            'price': round(product['price'] * exchange_rate(to=cur), 2),
+    #            'vat': 0}
+    #           for item in order['order']['items'] for product in pricing['prices']
+    #           if item['product_id'] == product['product_id']]
 
-    itemss = [{'product_id': item['product_id'],
-               'quantity': item['quantity'],
-               'price': round(product['price'] * exchange_rate(to=cur), 2),
-               'vat': round(pricing['vat_bands']['standard'] * product['price'] * exchange_rate(to=cur), 2)}
-              if product['vat_band'] == 'standard' else
-              {'product_id': item['product_id'],
-               'quantity': item['quantity'],
-               'price': round(product['price'] * exchange_rate(to=cur), 2),
-               'vat': 0}
-              for item in order['order']['items'] for product in pricing['prices']
-              if item['product_id'] == product['product_id']]
-
-    return itemss
+    return items
 
 
 def items_price(items):
