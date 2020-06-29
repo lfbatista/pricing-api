@@ -2,9 +2,9 @@ import json
 from flask import Flask, jsonify, request
 from order_total import CACHE, OrderTotal, pricing
 
-# CACHE = Cache(config={'CACHE_TYPE': 'simple'})
 app = Flask(__name__)
 CACHE.init_app(app)
+orders_total = dict()
 
 
 @app.route('/')
@@ -22,9 +22,11 @@ def orders():
     try:
         cur = request.args.get('cur', default='GBP').upper()
         payload = json.loads(request.get_data().decode('utf-8'))
-        order_summary = OrderTotal(payload, cur).total_order_summary()
-
-        return jsonify(order_summary)
+        if cur not in orders_total:
+            order_total = OrderTotal(payload, cur).total_order_summary()
+            orders_total[cur] = order_total
+            return order_total
+        return orders_total[cur]
     except Exception as e:
         print('Exception:', str(e))
         return 'Error processing data'

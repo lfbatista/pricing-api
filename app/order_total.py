@@ -1,4 +1,5 @@
 import json
+
 from flask_caching import Cache
 import requests
 
@@ -83,48 +84,70 @@ class OrderTotal(object):
         return order_total
 
 
-# def exchange_rate(fr='GBP', to='EUR'):
-#     """
-#     :argument fr: currency code to exchange from
-#     :argument to: currency code to exchange to
-#     :returns cached current exchange rate from currencyconverterapi.com
-#     """
-#
-#     curs = f'{fr}_{to}'
-#     request = API_URL + 'convert?q=' + curs + '&compact=ultra&apiKey=' + API_KEY
-#     response = requests.get(request)
-#     content = json.loads(response.content)
-#
-#     if response.status_code == 200:
-#         return content[curs]
-#
-#     print(content)
-#     return 1
+def cache(func):
+    """Cache function value if passed arguments changed"""
+    def wrapper_func(*args, **kwargs):
+        current_args = CACHE.get('args')
+        current_kwargs = CACHE.get('kwargs')
+        current_func = CACHE.get('func')
+
+        if current_args != args or current_kwargs != kwargs:
+            CACHE.set('args', args)
+            CACHE.get('args')
+
+            CACHE.set('kwargs', kwargs)
+            CACHE.get('kwargs')
+
+            CACHE.set('func', func(*args, **kwargs))
+            return CACHE.get('func')
+        return current_func
+
+    return wrapper_func
 
 
+@cache
 def exchange_rate(fr='GBP', to='EUR'):
     """
     :argument fr: currency code to exchange from
     :argument to: currency code to exchange to
     :returns cached current exchange rate from currencyconverterapi.com
     """
-    cur = CACHE.get('cur')
-    current_rate = CACHE.get('rate')
 
-    if cur != to:
-        curs = f'{fr}_{to}'
-        request = API_URL + 'convert?q=' + curs + '&compact=ultra&apiKey=' + API_KEY
-        response = requests.get(request)
-        content = json.loads(response.content)
+    curs = f'{fr}_{to}'
+    request = API_URL + 'convert?q=' + curs + '&compact=ultra&apiKey=' + API_KEY
+    response = requests.get(request)
+    content = json.loads(response.content)
 
-        if response.status_code == 200:
-            CACHE.set('cur', to)
-            CACHE.get('cur')
-            CACHE.set('rate', content[curs])
-            return CACHE.get('rate')
-        print(content)
-        return 1
-    return current_rate
+    if response.status_code == 200:
+        return content[curs]
+
+    print(content)
+    return 1
+
+
+# def exchange_rate(fr='GBP', to='EUR'):
+#     """
+#     :argument fr: currency code to exchange from
+#     :argument to: currency code to exchange to
+#     :returns cached current exchange rate from currencyconverterapi.com
+#     """
+#     cur = CACHE.get('cur')
+#     current_rate = CACHE.get('rate')
+#
+#     if cur != to:
+#         curs = f'{fr}_{to}'
+#         request = API_URL + 'convert?q=' + curs + '&compact=ultra&apiKey=' + API_KEY
+#         response = requests.get(request)
+#         content = json.loads(response.content)
+#
+#         if response.status_code == 200:
+#             CACHE.set('cur', to)
+#             CACHE.get('cur')
+#             CACHE.set('rate', content[curs])
+#             return CACHE.get('rate')
+#         print(content)
+#         return 1
+#     return current_rate
 
 
 with open('/home/luis/PycharmProjects/princing-api/pricing.json') as f:
