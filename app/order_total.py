@@ -110,11 +110,11 @@ def exchange_rate(fr='GBP', to='EUR'):
     """
     :argument fr: currency code to exchange from
     :argument to: currency code to exchange to
-    :returns cached current exchange rate from currencyconverterapi.com
+    :returns current exchange rate from currencyconverterapi.com
     """
 
     curs = f'{fr}_{to}'
-    request = API_URL + 'convert?q=' + curs + '&compact=ultra&apiKey=' + API_KEY
+    request = f'{API_URL}convert?q={curs}&compact=ultra&apiKey={API_KEY}'
     response = requests.get(request)
     content = json.loads(response.content)
 
@@ -123,31 +123,6 @@ def exchange_rate(fr='GBP', to='EUR'):
 
     print(content)
     return 1
-
-
-# def exchange_rate(fr='GBP', to='EUR'):
-#     """
-#     :argument fr: currency code to exchange from
-#     :argument to: currency code to exchange to
-#     :returns cached current exchange rate from currencyconverterapi.com
-#     """
-#     cur = CACHE.get('cur')
-#     current_rate = CACHE.get('rate')
-#
-#     if cur != to:
-#         curs = f'{fr}_{to}'
-#         request = API_URL + 'convert?q=' + curs + '&compact=ultra&apiKey=' + API_KEY
-#         response = requests.get(request)
-#         content = json.loads(response.content)
-#
-#         if response.status_code == 200:
-#             CACHE.set('cur', to)
-#             CACHE.get('cur')
-#             CACHE.set('rate', content[curs])
-#             return CACHE.get('rate')
-#         print(content)
-#         return 1
-#     return current_rate
 
 
 with open('/home/luis/PycharmProjects/princing-api/pricing.json') as f:

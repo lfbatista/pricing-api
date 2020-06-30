@@ -1,5 +1,8 @@
 import json
 import unittest
+import sys
+sys.path.append('app')
+
 from app import app
 
 MOCK_ITEMS = [{'price': 599, 'product_id': 1, 'quantity': 1, 'vat': 119.8},

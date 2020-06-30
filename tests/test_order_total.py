@@ -1,4 +1,7 @@
 import unittest
+import sys
+sys.path.append('app')
+
 from app import OrderTotal
 
 MOCK_ORDER = {
