@@ -125,6 +125,5 @@ def exchange_rate(fr='GBP', to='EUR'):
     return 1
 
 
-#with open('/home/luis/PycharmProjects/princing-api/pricing.json') as f:
 with open('pricing.json') as f:
     pricing = json.load(f)

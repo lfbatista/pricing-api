@@ -1,5 +1,8 @@
 language: python
 
+git:
+  depth: 1
+
 jobs:
   fast_finish: true
   include:
