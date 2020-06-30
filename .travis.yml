@@ -1,0 +1,13 @@
+language: python
+
+jobs:
+  fast_finish: true
+  include:
+  - name: Python 3.6 on Linux
+    python: 3.6
+
+install:
+  - pip install -r requirements.txt
+
+script:
+  - coverage run --source=tests -m unittest discover tests
