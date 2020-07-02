@@ -8,7 +8,7 @@ API_KEY = 'f5ce88e88cfe3383ed89'
 API_URL = 'https://free.currconv.com/api/v7/'
 
 
-class OrderTotal(object):
+class OrderTotal:
     def __init__(self, order, cur):
         self.order = order
         self.cur = cur
@@ -16,37 +16,36 @@ class OrderTotal(object):
 
     def order_items(self):
         """
-        :returns list of dictionaries containing product_id, quantity, price, and vat
+        computes the item price and vat for a given pricing, order, and exchange rate.
+        :returns list of items dictionaries
         """
         items = []
-        for product in pricing['prices']:
-            for item in self.order['order']['items']:
-                if item['product_id'] == product['product_id']:
-                    if product['vat_band'] == 'standard':
-                        items.append({'product_id': item['product_id'],
-                                      'quantity': item['quantity'],
-                                      'price': round(product['price'] * exchange_rate(to=self.cur), 2),
-                                      'vat': round(pricing['vat_bands']['standard']
-                                                   * product['price'] * exchange_rate(to=self.cur), 2)})
-                    else:
-                        items.append({'product_id': item['product_id'],
-                                      'quantity': item['quantity'],
-                                      'price': round(product['price'] * exchange_rate(to=self.cur), 2),
-                                      'vat': 0})
-        # overkill
-        # items = [{'product_id': item['product_id'],
-        #            'quantity': item['quantity'],
-        #            'price': round(product['price'] * exchange_rate(to=cur), 2),
-        #            'vat': round(pricing['vat_bands']['standard'] * product['price'] * exchange_rate(to=cur), 2)}
-        #           if product['vat_band'] == 'standard' else
-        #           {'product_id': item['product_id'],
-        #            'quantity': item['quantity'],
-        #            'price': round(product['price'] * exchange_rate(to=cur), 2),
-        #            'vat': 0}
-        #           for item in order['order']['items'] for product in pricing['prices']
-        #           if item['product_id'] == product['product_id']]
+        products = {product['product_id']: product for product in pricing['prices']}
+
+        for item in self.order['order']['items']:
+            product = products.get(item['product_id'])
+
+            vat = 0
+            if product['vat_band'] == 'standard':
+                vat = pricing['vat_bands']['standard'] * product['price']
+            items.append(
+                {
+                    'product_id': item['product_id'],
+                    'quantity': item['quantity'],
+                    'price': self.convert_price(product['price']),
+                    'vat': self.convert_price(vat),
+                }
+            )
 
         return items
+
+    def convert_price(self, price):
+        """
+        converts price value to is given currency passed in exchange_rate
+        :param price: value to convert
+        :returns converted price, rounded
+        """
+        return round(price * exchange_rate(to=self.cur), 2)
 
     def items_price(self):
         """

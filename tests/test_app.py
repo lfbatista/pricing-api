@@ -67,11 +67,11 @@ class TestApp(unittest.TestCase):
         self.app = app.test_client()
 
     def test_pricing(self):
-        response = self.app.get('/', follow_redirects=True)
+        response = self.app.get('/api/prices', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
 
     def test_orders(self):
-        result = self.app.post('/orders', data=json.dumps(MOCK_ORDER))
+        result = self.app.post('/api/orders', data=json.dumps(MOCK_ORDER))
         self.assertEqual(json.loads(result.data), MOCK_RESULT)
 
 

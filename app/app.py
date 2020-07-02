@@ -7,13 +7,12 @@ CACHE.init_app(app)
 orders_total = dict()
 
 
-@app.route('/')
-@app.route('/prices')
+@app.route('/api/prices')
 def prices():
     return jsonify(pricing)
 
 
-@app.route('/orders', methods=('POST', 'PUT'))
+@app.route('/api/orders', methods=('POST', 'PUT'))
 def orders():
     """
     :parameter cur: currency code
